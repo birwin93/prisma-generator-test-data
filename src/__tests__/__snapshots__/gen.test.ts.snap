@@ -1,0 +1,59 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`generate: test_snapshot 1`] = `
+"export function testUser(): User {
+        return {
+            id: faker.string.uuid(),
+rewardsId: faker.string.numeric(8),
+ezLinksContactId: faker.string.numeric(8),
+email: faker.internet.email(),
+role: Role.USER,
+firstName: faker.person.firstName(),
+lastName: faker.person.lastName(),
+zipCode: '00000',
+createdAt: new Date(),
+updatedAt: new Date(),
+        }
+    }
+
+export function testCourse(): Course {
+        return {
+            id: faker.string.uuid(),
+ezlinksId: faker.number.int(),
+troonFacilityId: faker.number.int(),
+name: courseName,
+facilityName: facilityName,
+phone: faker.phone.number(),
+latitude: latitude,
+longitude: longitude,
+holeCount: 18,
+createdAt: new Date(),
+updatedAt: new Date(),
+        }
+    }
+
+export function testReservation(): Reservation {
+        return {
+            id: faker.string.uuid(),
+teeTimeId: faker.lorem.word(10),
+courseId: faker.lorem.word(10),
+state: ReservationState.ACTIVE,
+playerCount: faker.number.int(),
+dayTimeString: faker.lorem.word(10),
+ownerId: faker.lorem.word(10),
+createdAt: new Date(),
+updatedAt: new Date(),
+        }
+    }
+
+export function testReservationUser(): ReservationUser {
+        return {
+            id: faker.string.uuid(),
+state: ReservationUserState.EMPTY,
+reservationId: faker.lorem.word(10),
+originalCost: [object Object],
+createdAt: new Date(),
+updatedAt: new Date(),
+        }
+    }"
+`;

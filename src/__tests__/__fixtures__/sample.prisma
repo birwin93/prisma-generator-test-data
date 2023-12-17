@@ -1,0 +1,119 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                String            @id @default(uuid())
+  /// @td:numberString
+  rewardsId         String            @unique @map("rewards_id")
+  /// @td:numberString
+  ezLinksContactId  String            @unique @map("ez_links_id")
+  /// @td:email
+  email             String            @unique
+  role              Role              @default(USER)
+  /// @td:firstName
+  firstName         String            @default("first") @map("first_name")
+  /// @td:lastName
+  lastName          String            @default("last") @map("last_name")
+  zipCode           String            @default("00000") @map("zip_code")
+  ownedReservations Reservation[]
+  reservations      ReservationUser[]
+  createdAt         DateTime          @default(now()) @map("created_at")
+  updatedAt         DateTime          @updatedAt @map("updated_at")
+
+  @@map("users")
+}
+
+enum Role {
+  USER
+  OPERATOR
+  ADMIN
+}
+
+model Course {
+  id                   String                                 @id @default(uuid())
+  /// @td:bigint
+  ezlinksId            BigInt                                 @unique @map("ez_links_id")
+  /// @td:bigint
+  troonFacilityId      BigInt?                                @map("troon_facility_id")
+  /// @td:courseName
+  name                 String
+  /// @td:facilityName
+  facilityName         String?                                @map("facility_name")
+  /// @td:phone
+  phone                String?
+  /// @td:latitude
+  latitude             Float?
+  /// @td:longitude
+  longitude            Float?
+  location             Unsupported("geography(Point, 4326)")?
+  /// @td:18
+  holeCount            Int                                    @map("hole_count") @db.SmallInt
+  website              String?
+  imageUrl             String?                                @map("image_url")
+  avatarUrl            String?                                @map("avatar_url")
+  reservations         Reservation[]
+  ezLinksPosCourseCode String?                                @map("ez_links_pos_course_code")
+  createdAt            DateTime                               @default(now()) @map("created_at")
+  updatedAt            DateTime                               @updatedAt @map("updated_at")
+
+  @@index([location], name: "course_location_idx", type: Gist)
+  @@map("courses")
+}
+
+model Reservation {
+  id               String            @id @default(uuid())
+  teeTimeId        String            @map("tee_time_id")
+  courseId         String            @map("course_id")
+  state            ReservationState  @default(ACTIVE)
+  playerCount      Int               @default(1) @map("player_count") @db.SmallInt
+  dayTimeString    String            @map("day_time_string")
+  course           Course            @relation(fields: [courseId], references: [id])
+  ownerId          String            @map("owner_id")
+  owner            User              @relation(fields: [ownerId], references: [id])
+  users            ReservationUser[]
+  ezLinksConfirmId Int?              @map("ez_links_confirm_id")
+  createdAt        DateTime          @default(now()) @map("created_at")
+  updatedAt        DateTime          @updatedAt @map("updated_at")
+
+  @@map("reservations")
+}
+
+enum ReservationState {
+  ACTIVE
+  PENDING
+  CANCELLED
+  COMPLETED
+}
+
+model ReservationUser {
+  id     String               @id @default(uuid())
+  userId String?              @map("user_id")
+  user   User?                @relation(fields: [userId], references: [id])
+  state  ReservationUserState
+
+  reservationId       String      @map("reservation_id")
+  reservation         Reservation @relation(fields: [reservationId], references: [id])
+  ezLinksTTID         BigInt?     @map("ez_links_ttid")
+  ezLinksCheckInState Int?        @map("ez_links_check_in_state")
+  ezLinksContactId    String?     @map("ez_links_contact_id")
+
+  // The cost we get from the tee time service before any discounts
+  originalCost Decimal @map("original_cost") @db.Decimal
+
+  // The amount the user paid for this reservation, including discounts
+  pricePaid Decimal? @map("price_paid") @db.Decimal
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([reservationId, userId])
+  @@map("reservation_users")
+}
+
+enum ReservationUserState {
+  EMPTY
+  INVITED
+  ACCEPTED
+}
