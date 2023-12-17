@@ -1,8 +1,8 @@
-import { DMMF, generatorHandler, GeneratorOptions } from '@prisma/generator-helper'
+import { generatorHandler, GeneratorOptions } from '@prisma/generator-helper'
 import path from 'path'
 import { GENERATOR_NAME } from './constants'
-import { writeFileSafely } from './utils/writeFileSafely'
 import { generate } from './helpers/generate'
+import { writeFileSafely } from './utils/writeFileSafely'
 
 const { version } = require('../package.json')
 
@@ -15,7 +15,7 @@ generatorHandler({
     }
   },
   onGenerate: async (options: GeneratorOptions) => {
-    const content = generate(options.dmmf.datamodel);
+    const content = generate(options.dmmf.datamodel)
     const writeLocation = path.join(
       options.generator.output?.value!,
       `test.data.ts`,
@@ -24,4 +24,3 @@ generatorHandler({
     await writeFileSafely(writeLocation, content)
   },
 })
-

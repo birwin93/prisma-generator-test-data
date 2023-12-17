@@ -1,7 +1,7 @@
 {
   "name": "prisma-generator-test-data",
   "description": "Provide a description about your generator",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "dist/generator.js",
   "license": "MIT",
   "bin": {
@@ -14,8 +14,7 @@
     "start": "node dist/bin.js",
     "dev": "npx tsc -w",
     "build": "npx tsc",
-    "test": "jest",
-    "prepare": "husky install"
+    "test": "jest"
   },
   "dependencies": {
     "@prisma/client": "^5.7.0",
